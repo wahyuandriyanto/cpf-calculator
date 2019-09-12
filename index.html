@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="assets/css/buefy.min.css">
+    <link rel="stylesheet" href="https://cdn.materialdesignicons.com/2.5.94/css/materialdesignicons.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css">
+    <link href="https://fonts.googleapis.com/css?family=Poppins&display=swap" rel="stylesheet">
+    <script src="assets/js/main.js"></script>	
+	<title>CPF Calculator</title>
+
+	<style type="text/css">
+		body{
+			font-family: 'Poppins', sans-serif;
+		}
+	</style>
+
+</head>
+
+
+<body>
+    <div id="app">
+        <section class="section">
+            <div class="container">
+                <div class="box">
+                    <h1 class="title">
+                        CPF Calculator
+                    </h1>
+                    <div class="columns is-destop">
+                        <div class="column is-two-fifths">
+                            <div class="box">
+                                <div class="field">
+                                    <template>
+                                        <b-field label="Your Payroll Month and Year (MM/YYYY)">
+                                            <b-datepicker placeholder="Your Payroll Month and Year" type="month" id="payrollmonth" data-date-format="YYYY/MM" icon="calendar-today">
+                                            </b-datepicker>
+                                        </b-field>
+                                    </template>
+                                </div>
+
+                                <div class="field">
+                                    <template>
+                                        <b-field label="Birthday (DD/MM/YYYY)">
+                                            <b-datepicker placeholder="Birthday (DD/MM/YYYY)" id="birthday" icon="calendar-today">
+                                            </b-datepicker>
+                                        </b-field>
+                                    </template>
+                                </div>
+                                <div class="field">
+                                    <label class="label">Citizenship</label>
+                                    <div class="control">
+                                        <div class="select">
+                                            <select id="selectCitizenship" onchange="show()">
+                                                <option value="citizen">Singapore Citizen</option>
+                                                <option value="pr">Singapore PR</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="field" id="PRDate" style="display: none;">
+                                    <template>
+                                        <b-field label="PR Date">
+                                            <b-datepicker placeholder="Birthday (DD/MM/YYYY)" id="pr" icon="calendar-today">
+                                            </b-datepicker>
+                                        </b-field>
+                                    </template>
+                                </div>
+
+                                <div class="field" id="tcr" style="display: none;">
+                                    <label class="label">Type of contribution rates</label>
+                                    <div class="control">
+                                        <div class="select">
+                                            <select id="typeContribution">
+                                                <option value="GG">Graduated Employer & Employee (G/G)</option>
+                                                <option value="FG">Full Employer & Graduated Employee (F/G)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <div class="field">
+                                    <label class="label">CPF Donation Type</label>
+                                    <div class="control is-full">
+                                        <div class="select is-full">
+                                            <select id="cpfDonation">
+                                                <option value="N/A">N/A</option>
+                                                <option value="cdac">CDAC</option>
+                                                <option value="sinda">SINDA</option>
+                                                <option value="ecf">ECF</option>
+                                                <option value="mbmf">MBMF</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="label">Salary (Ordinary Wage)</label>
+                                    <p class="control has-icons-left has-icons-right">
+                                        <input class="input" type="number" id="ow" value="0.00">
+                                        <span class="icon is-small is-left">
+                                            <i class="fas fa-dollar-sign"></i>
+                                        </span>
+                                        <span class="icon is-small is-right">
+                                            <i class="fas fa-check"></i>
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="field">
+                                    <label class="label">Bonus/Comission (Add. Wage)</label>
+                                    <p class="control has-icons-left has-icons-right">
+                                        <input class="input" type="number" id="aw" value="0.00">
+                                        <span class="icon is-small is-left">
+                                            <i class="fas fa-dollar-sign"></i>
+                                        </span>
+                                        <span class="icon is-small is-right">
+                                            <i class="fas fa-check"></i>
+                                        </span>
+                                    </p>
+                                </div>
+
+                                <div class="field">
+                                    <div class="control">
+                                        <button class="button is-link is-mobile" onclick="printCPF()">Calculate CPF</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="column" id="images">
+                        	<img src="assets/img/cpf-calculator-hrmlabs.png" class="image">
+                        </div>
+                        <div class="column" id="result" style="display: none;">
+                        	<h4 class="title is-4">
+                        		Results
+                    		</h4>
+                    		<hr>
+                    		<div class="columns">
+                    			<div class="column">
+                    				<div class="box has-text-centered">
+                    					<p class="subtitle is-6">EMPLOYEE CPF</p>
+                    					<h3 class="title is-3" id="employeeCPF"></h3>
+                    				</div>
+                    			</div>
+                    			<div class="column">
+                    				<div class="box has-text-centered">
+                    					<p class="subtitle is-6">EMPLOYER CPF</p>
+                    					<h3 class="title is-3" id="employerCPF"></h3>
+                    				</div>
+                    			</div>
+
+                    		</div>
+                    		<div class="columns">
+                    			<div class="column">
+                    				<div class="box has-text-centered">
+                    					<p class="subtitle is-6 is-uppercase" id="donationType">Donation Type</p>
+                    					<h3 class="title is-3" id="contribution"></h3>
+                    				</div>
+                    			</div>
+                    			<div class="column">
+                    				<div class="box has-text-centered">
+                    					<p class="subtitle is-6 is-uppercase" id="donationType">SDL</p>
+                    					<h3 class="title is-3" id="sdl"></h3>
+                    				</div>
+                    			</div>
+                    		</div>
+                    		<div class="level box">
+                    			<div class="level-left has-text-centered">
+                    				<h4 class="title is-4" id="donationType">Net Pay</h4>
+                    			</div>
+                    			<div class="level-right has-text-centered">
+                    				<h3 class="title is-3" id="netpay"></h3>
+                    			</div>
+                    		</div> 
+                    		<h4 class="title is-4">
+                        		Details
+                    		</h4>
+                    		<hr>
+                    		<div class="box">
+                    			<div class="level">
+                    				<div class="level-left">
+                    					<p>Total CPF Contribution</p>
+                    				</div>
+                    				<div class="level-right">
+                    					<p id="totalDetails"></p>
+                    				</div>
+                    			</div>
+                    			<div class="level">
+                    				<div class="level-left">
+                    					<p>Employee's Share of CPF Contribution</p>
+                    				</div>
+                    				<div class="level-right">
+                    					<p id="employeeCpfDetail"></p>
+                    				</div>
+                    			</div>
+                    			<div class="level">
+                    				<div class="level-left">
+                    					<p>Employer's Share of CPF Contribution</p>
+                    				</div>
+                    				<div class="level-right">
+                    					<p id="employerCpfDetail"></p>
+                    				</div>
+                    			</div>
+                    		</div>
+                        </div>                   
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <script src="assets/js/vue.js"></script>
+        <!-- Full bundle -->
+        <script src="assets/js/buefy.min.js"></script>
+
+        <!-- Individual components -->
+      
+
+        <script>
+            new Vue({
+                el: '#app'
+            })
+        </script>
+</body>
+
+
+	
+</html>
